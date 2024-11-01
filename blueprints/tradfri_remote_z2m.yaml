@@ -1,0 +1,60 @@
+blueprint:
+  name: Z2M - управление шторами через пульт IKEA Tradfri
+  description: |
+    Короткое нажатие на кнопку ☼ открывает штору.
+    Короткое нажатие на кнопку ☰ закрывает штору на указанный процент.
+    Долгое нажатие на любую кнопку останавливает штору.
+  domain: automation
+  input:
+    remote:
+      name: Пульт IKEA Tradfri
+      description: "Пульт, который умеет action open/close/stop"
+      selector:
+        entity:
+          integration: mqtt
+          domain: sensor
+    cover:
+      name: Штора
+      description: Штора (любая)
+      selector:
+        target:
+          entity:
+            domain: cover
+    cover_bottom:
+      name: "Процент закрытия шторы"
+      description: "Нижнее положение шторы в %. По-умолчанию 100"
+      default: 100
+      selector:
+        number:
+          min: 0
+          max: 100
+          mode: slider
+          step: 1
+trigger:
+  - platform: state
+    entity_id: !input remote
+    from: null
+    to: null
+action:
+  - variables:  
+      command: " {{ trigger.to_state.state }} "
+      bottom_position: !input 'cover_bottom'
+  - choose:
+    - conditions:
+      - '{{ command == "open" }}'
+      sequence:
+      - service: cover.open_cover
+        target: !input cover
+    - conditions:
+      - '{{ command == "close" }}'
+      sequence:
+      - service: cover.set_cover_position
+        target: !input cover
+        data:
+          position: '{{ bottom_position }}'
+    - conditions:
+      - '{{ command in ("stop", "stop_opening", "stop_closing") }}'
+      sequence:
+      - service: cover.stop_cover
+        target: !input cover
+mode: single

@@ -1,0 +1,15 @@
+- binary_sensor:
+    - name: Washing Machine Binary
+      unique_id: binary_sensor_washing_machine
+      delay_off:
+        minutes: 5 
+      state: "{{ states('sensor.washing_machine_power')|float(0) > 5 }}"
+      icon: >
+        {% if states('sensor.washing_machine_power')|float(0) == 0 %}
+          mdi:washing-machine-off
+        {% elif (states('sensor.washing_machine_power')|float(0) > 0 and states('sensor.washing_machine_power')|float(0) <= 0 ) %}
+          mdi:washing-machine-alert
+        {% else %}
+          mdi:washing-machine
+        {% endif %}
+

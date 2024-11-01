@@ -1,0 +1,19 @@
+- binary_sensor:
+    - name: Powerline42 Virtual
+      unique_id: powerline42_virtual
+      state: >
+        {% if is_state('binary_sensor.powerline42_contact', 'off') %}
+            on
+        {% elif is_state('binary_sensor.powerline42_contact', 'on') %}
+            off
+        {% else %}
+            unavailable 
+        {% endif %}
+      icon: >
+        {% if is_state('binary_sensor.powerline42_contact', 'off') %}
+            mdi:transmission-tower-export
+        {% elif is_state('binary_sensor.powerline42_contact', 'on') %}
+            mdi:transmission-tower-off
+        {% else %}
+            mdi:crosshairs-question
+        {% endif %}
