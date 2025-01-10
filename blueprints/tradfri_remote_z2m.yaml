@@ -12,7 +12,7 @@ blueprint:
       selector:
         entity:
           integration: mqtt
-          domain: sensor
+          domain: event
     cover:
       name: Штора
       description: Штора (любая)
@@ -37,7 +37,7 @@ trigger:
     to: null
 action:
   - variables:  
-      command: " {{ trigger.to_state.state }} "
+      command: " {{ trigger.to_state.attributes.event_type }} "
       bottom_position: !input 'cover_bottom'
   - choose:
     - conditions:
